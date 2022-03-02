@@ -92,6 +92,8 @@ void printLevel(){
   arduboy.setCursor(70,20);
   arduboy.print("LVL: ");
   arduboy.print(stage+1);
+  arduboy.setCursor(70,50);
+  arduboy.print("B: Retry");
 }
 
 bool copyLevel(){
