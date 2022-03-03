@@ -1,293 +1,182 @@
 #include <Arduboy2.h>
 Arduboy2 arduboy;
-#include "Direction.h"
-#include "Bitmaps.h"
-#include "GameState.h"
-#include "TileTypes.h"
 #include "maps.h"
-#include "Hero.h"
+#include "images.h"
 
-constexpr uint8_t mapWidth = 8;
-constexpr uint8_t mapHeight = 8;
-constexpr uint8_t tileSize = 8;
+uint8_t current[] = {
+0b00000000,
+0b00000000,
+0b00000000,
+0b00000000,
+0b00000000,
+0b00000000,
+0b00000000,
+0b00000000
+};
 
-TileType current[mapWidth*mapHeight] {TileType::Empty};
-Hero hero;
-uint8_t stage = 0;
+int8_t GRID_SIZE = 8;
+int8_t heroX;
+int8_t heroY;
+int8_t heroVX;
+int8_t heroVY;
+int8_t stage = 0;
+int8_t stages;
 
-GameState gamestate = GameState::SplashScreen;
-
-TileType getTile(int8_t x, int8_t y){
-  if((x < 0)||(x > mapWidth)||(y < 0)||(y > mapHeight)) return TileType::Wall;
-  return current[(y * mapWidth)+x];
-}
-
-void setTile(int8_t x, int8_t y,TileType tile){
-  if((x < 0)||(x > mapWidth)||(y < 0)||(y > mapHeight)) return;
-  current[(y * mapWidth)+x] = tile;
+void setup() {
+  arduboy.boot();
+  arduboy.setFrameRate(30);
+  arduboy.clear();
+  arduboy.drawBitmap(15,0,cat,27,64);
+  arduboy.setCursor(45,30);
+  arduboy.println("LongCat");
+  arduboy.setCursor(45,45);
+  arduboy.println("Press A");
+  arduboy.display();
+  arduboy.delayShort(2000);
+  while (!arduboy.pressed(A_BUTTON)) {
+    
+  }
+  initLevel();
+  
 }
 
 void nextStage(){
-  arduboy.clear();
-  arduboy.setCursor(35,30);
-  arduboy.print("Purrfect!");
+  arduboy.setCursor(70,30);
+  arduboy.print("Perfect!");
   arduboy.display();
   arduboy.delayShort(1000);
+  arduboy.clear();
+  stage = stage + 1;
+  initLevel();
 }
 
-void gameEnd(){
+void endGame(){
   arduboy.clear();
   arduboy.setCursor(10,30);
-  arduboy.print(F("Game Completed!"));
+  arduboy.print("Game Completed!");
   arduboy.display();
   arduboy.delayShort(3000);
-}
-
-void renderLevelData(){
-  arduboy.setCursor(70,20);
-  arduboy.print(F("LVL: "));
-  arduboy.print(stage+1);
-  arduboy.setCursor(70,50);
-  arduboy.print("B: Retry");
-}
-
-bool copyLevel(){
-  for(uint8_t j=0; j<8; j++){
-    //current[i]=levels[stage][i];
-    byte mapValues = pgm_read_byte_near(levels[stage]+j);
-    for(uint8_t i=0; i < 8; i++){
-      if(bitRead(mapValues,7-i)){
-        setTile(i,j,TileType::Wall);
-      }
-      else{
-        setTile(i,j,TileType::Empty);
-      }
-    }
-  }
-  hero.x = pgm_read_byte_near(levels[stage]+8);
-  hero.y = pgm_read_byte_near(levels[stage]+9);
-  hero.dx = 0;
-  hero.dy = 0;
-}
-
-bool isStuck(){
-  if((getTile(hero.x+1,hero.y) != TileType::Empty)&&(getTile(hero.x-1,hero.y) != TileType::Empty)&&(getTile(hero.x,hero.y+1) != TileType::Empty)&&(getTile(hero.x,hero.y-1) != TileType::Empty))
-    return true;
-  return false;
-}
-
-void renderLevel(){
-  for(int j=0;j<8;j++){
-    for(int i=0;i<8;i++){
-      uint8_t tileIndex = toTileIndex(getTile(i,j));
-      Sprites::drawOverwrite(i * tileSize, j * tileSize, Cats, tileIndex);
-    }
-  }
-}
-
-void placeCatPiece(int8_t x, int8_t y){
-  switch(hero.direction){
-    case Direction::Left:
-      switch(hero.lastDirection){
-        case Direction::Center: setTile(x,y,TileType::Cat_Tail_Left); break;
-        case Direction::Left: setTile(x,y,TileType::Cat_Body_Horizontal); break;
-        case Direction::Right: break; 
-        case Direction::Up: setTile(x,y,TileType::Cat_Body_Down_Left); break;
-        case Direction::Down: setTile(x,y,TileType::Cat_Body_Up_Left); break;
-      }
-      break;
-    case Direction::Right:
-      switch(hero.lastDirection){
-        case Direction::Center: setTile(x,y,TileType::Cat_Tail_Right); break;
-        case Direction::Left: break;
-        case Direction::Right: setTile(x,y,TileType::Cat_Body_Horizontal); break;
-        case Direction::Up: setTile(x,y,TileType::Cat_Body_Down_Right); break;
-        case Direction::Down: setTile(x,y,TileType::Cat_Body_Up_Right); break;
-      }
-      break;
-    case Direction::Up:
-       switch(hero.lastDirection){
-        case Direction::Center: setTile(x,y,TileType::Cat_Tail_Up); break;
-        case Direction::Left: setTile(x,y,TileType::Cat_Body_Up_Right); break;
-        case Direction::Right: setTile(x,y,TileType::Cat_Body_Up_Left); break;
-        case Direction::Up: setTile(x,y,TileType::Cat_Body_Vertical); break;
-        case Direction::Down: break;
-      }
-      break;
-    case Direction::Down:
-      switch(hero.lastDirection){
-        case Direction::Center: setTile(x,y,TileType::Cat_Tail_Down); break;
-        case Direction::Left: setTile(x,y,TileType::Cat_Body_Down_Right); break;
-        case Direction::Right: setTile(x,y,TileType::Cat_Body_Down_Left); break;
-        case Direction::Up: break;
-        case Direction::Down: setTile(x,y,TileType::Cat_Body_Vertical); break;
-      }
-      break;
-  }
-}
-
-bool movePlayer(){
-  placeCatPiece(hero.x,hero.y);
-  hero.lastDirection = hero.direction;
-  int nextX = constrain(hero.x+hero.dx, 0, 7);
-  int nextY = constrain(hero.y+hero.dy, 0, 7);
-  if(getTile(nextX,nextY) == TileType::Empty){
-    hero.x =  nextX;
-    hero.y =  nextY;
-    return true;
-  } else {
-    hero.dx =  0;
-    hero.dy =  0;
-    return false;
-  }
-}
-
-void renderPlayer(){
-  TileType type;
-  switch(hero.lastDirection){
-    case Direction::Center: type = TileType::Cat_Head_Down; break;
-    case Direction::Down: type = TileType::Cat_Head_Down; break;
-    case Direction::Up: type = TileType::Cat_Head_Up; break;
-    case Direction::Left: type = TileType::Cat_Head_Left; break;
-    case Direction::Right: type = TileType::Cat_Head_Right; break;
-  }
-  Sprites::drawOverwrite(hero.x * tileSize, hero.y * tileSize, Cats, toTileIndex(type));
-}
-
-bool checkWin(){
-  for(uint8_t i = 0; i < (mapWidth*mapHeight); i++){
-    if(current[i] == TileType::Empty){
-      return false;
-    }
-  }
-  return true;
-}
-
-void readPlayerInput(){
-  if (arduboy.pressed(UP_BUTTON)) {
-    if(getTile(hero.x,hero.y-1) == TileType::Empty){
-      hero.dx = 0;
-      hero.dy = -1;
-      hero.lastDirection = hero.direction;
-      hero.direction = Direction::Up;
-      gamestate = GameState::Simulate;
-    }
-  }
-  else if (arduboy.pressed(RIGHT_BUTTON)) {
-    if(getTile(hero.x+1,hero.y) == TileType::Empty){
-      hero.dx = 1;
-      hero.dy = 0;
-      hero.lastDirection = hero.direction;
-      hero.direction = Direction::Right;
-      gamestate = GameState::Simulate;
-    }
-  }
-  else if (arduboy.pressed(DOWN_BUTTON)) {
-    if(getTile(hero.x,hero.y+1) == TileType::Empty){
-      hero.dx = 0;
-      hero.dy = 1;
-      hero.lastDirection = hero.direction;
-      hero.direction = Direction::Down;
-      gamestate = GameState::Simulate;
-    }
-  }
-  else if (arduboy.pressed(LEFT_BUTTON)) {
-    if(getTile(hero.x-1,hero.y) == TileType::Empty){
-      hero.dx = -1;
-      hero.dy = 0;
-      hero.lastDirection = hero.direction;
-      hero.direction = Direction::Left;
-      gamestate = GameState::Simulate;
-    }
-  }
-  else if (arduboy.pressed(B_BUTTON)) {
-    gamestate = GameState::LoadLevel;
-  }
-}
-
-void renderPlayArea(){
-  renderLevel();
-  renderPlayer();
-  renderLevelData();
-}
-
-void updateGameplay(){
-  readPlayerInput();
-  arduboy.clear();
-  if(isStuck()){
-    arduboy.setCursor(70,30);  
-    arduboy.print(F("STUCK!"));
-  }
-  renderPlayArea();
-  arduboy.display();
-}
-
-void updateSimulation(){
-  
-  if(arduboy.everyXFrames(5)){
-    if(movePlayer() == false){
-      gamestate = GameState::GamePlay;
-    }
-  }
-  arduboy.clear();
-  renderPlayArea();
-  arduboy.display();
-  
-  if(checkWin()){
-    if(stage == maxLevel){
-      gameEnd();
-      gamestate = GameState::SplashScreen;
-    }else{
-      nextStage();
-      stage++;
-      gamestate = GameState::LoadLevel;
-    }
-  }
-
-  
-  
-}
-
-void updateLoadLevel(){
-  hero.dx = 0;
-  hero.dy = 0;
-  hero.x = 0;
-  hero.y = 0;
-  hero.direction = Direction::Center;
-  hero.lastDirection = Direction::Center;
-  copyLevel();
-  gamestate = GameState::GamePlay;
-}
-
-void updateSplashScreen(){
-  arduboy.clear();
-  arduboy.setCursor(35,30);
-  arduboy.println("PxlFller");
-  arduboy.setCursor(40,45);
-  arduboy.println("Prss A");
-  arduboy.display();
-  if(arduboy.pressed(A_BUTTON)){
-    stage = 0;
-    gamestate = GameState::LoadLevel;
-  }
-}
-
-void setup() {
-  arduboy.begin();
-  arduboy.setFrameRate(30);
-  arduboy.clear();  
+  stage = 0;
+  initLevel();
 }
 
 void loop() {
   if(!arduboy.nextFrame()){
     return;
   }
-  arduboy.pollButtons();
-  switch(gamestate){
-    case GameState::SplashScreen: updateSplashScreen(); break;
-    case GameState::LoadLevel: updateLoadLevel(); break;
-    case GameState::GamePlay: updateGameplay(); break;
-    case GameState::Simulate: updateSimulation(); break;
-    default: gamestate = GameState::SplashScreen;
+  readButtons();
+  move();
+  renderHero();
+  arduboy.display();
+  if(checkWin()){
+    if(stage==45){
+      endGame();
+    }else{
+      nextStage();
+    }
+  }
+}
+
+void initLevel(){
+  heroVX = 0;
+  heroVY = 0;
+  heroX = 3;
+  heroY = 3;
+  fillSquare(heroX,heroY);
+  arduboy.clear();
+  copyLevel();
+  drawLevel();
+  renderHero();
+  printLevel();
+}
+
+void printLevel(){
+  arduboy.setCursor(70,20);
+  arduboy.print("LVL: ");
+  arduboy.print(stage+1);
+  arduboy.setCursor(70,50);
+  arduboy.print("B: Retry");
+}
+
+bool copyLevel(){
+  for(int i=0; i<8; i++){
+    //current[i]=levels[stage][i];
+    current[i]=pgm_read_byte_near(levels[stage]+i);
+  }
+  heroX = pgm_read_byte_near(levels[stage]+8);
+  heroY = pgm_read_byte_near(levels[stage]+9);
+}
+
+void drawLevel(){
+  for(int j=0;j<8;j++){
+    for(int i=0;i<8;i++){
+      if(squareCheck(i,j)){
+        arduboy.fillRect(i*GRID_SIZE, j*GRID_SIZE, GRID_SIZE, GRID_SIZE ,1);
+      }else{
+        arduboy.drawPixel(i*GRID_SIZE+3, j*GRID_SIZE+3, 1);
+      }
+    }
+  }
+}
+
+void move(){
+  int nextX = constrain(heroX+heroVX, 0, 7);
+  int nextY = constrain(heroY+heroVY, 0, 7);
+  if( !squareCheck( nextX , nextY ) ){
+    arduboy.fillRect(heroX*GRID_SIZE+2,heroY*GRID_SIZE+2,4,4,0);
+    heroX =  nextX;
+    heroY =  nextY;
+    //drawHero(heroX, heroY, GRID_SIZE);
+    fillSquare(heroX,heroY);
+  }
+}
+void renderHero(){
+  drawHero(heroX*GRID_SIZE,heroY*GRID_SIZE,GRID_SIZE);
+}
+void drawHero(int x, int y, int size){
+  arduboy.drawRect(x+1, y+1, size-2, size-2 ,1);
+  //arduboy.drawRect(x+2, y+2, size-4, size-4 ,1);
+  arduboy.drawPixel(x+3, y+3, 1);
+  arduboy.drawPixel(x+5, y+3, 1);
+}
+
+void fillSquare(int x, int y){
+  bitWrite(current[y], 7-x, 1);
+}
+bool squareCheck(int8_t x, int8_t y){
+  return bitRead(current[y],7-x);
+}
+
+bool checkWin(){
+  for(int i=0;i<8;i++){
+    if(current[i]!=0b11111111){
+      return false;
+    }
+  }
+  return true;
+}
+
+void readButtons(){
+  if (arduboy.pressed(UP_BUTTON)) {
+    heroVX=0;
+    heroVY=-1;
+  }
+  else if (arduboy.pressed(RIGHT_BUTTON)) {
+    heroVX=1;
+    heroVY=0;
+  }
+  else if (arduboy.pressed(DOWN_BUTTON)) {
+    heroVX=0;
+    heroVY=1;
+  }
+  else if (arduboy.pressed(LEFT_BUTTON)) {
+    heroVX=-1;
+    heroVY=0;
+  }
+  if (arduboy.pressed(B_BUTTON)) {
+    initLevel();
+  }
+  if (arduboy.pressed(A_BUTTON)) {
+    //nextStage();
   }
 }
