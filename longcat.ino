@@ -2,11 +2,12 @@
 Arduboy2 arduboy;
 #include "Direction.h"
 #include "Bitmaps.h"
-#include "Splash.h"
+#include "Splash.h" 
 #include "GameState.h"
 #include "TileTypes.h"
 #include "maps.h"
 #include "Hero.h"
+#define SAVELOCATION  EEPROM_STORAGE_SPACE_START + 100
 
 constexpr uint8_t mapWidth = 8;
 constexpr uint8_t mapHeight = 8;
@@ -15,6 +16,7 @@ constexpr uint8_t tileSize = 8;
 TileType current[mapWidth*mapHeight] {TileType::Wall};
 Hero hero;
 uint8_t stage = 0;
+uint8_t maxlevel = 0;
 
 GameState gamestate = GameState::SplashScreen;
 
@@ -28,12 +30,21 @@ void setTile(int8_t x, int8_t y,TileType tile){
   current[(y * mapWidth)+x] = tile;
 }
 
+void loadEeprom(){
+  EEPROM.get(SAVELOCATION, maxlevel);
+  if(maxlevel >= 45) {
+    maxlevel = 0;
+    EEPROM.put(SAVELOCATION, maxlevel);
+  }
+  stage = maxlevel;
+}
+
 void nextStage(){
-  arduboy.clear();
-  arduboy.setCursor(35,30);
-  arduboy.print("Purrfect!");
+  //arduboy.clear();
+  arduboy.setCursor(70,35);
+  arduboy.print("PURRFECT!");
   arduboy.display();
-  arduboy.delayShort(1000);
+  arduboy.delayShort(1500);
 }
 
 void gameEnd(){
@@ -45,10 +56,10 @@ void gameEnd(){
 }
 
 void renderLevelData(){
-  arduboy.setCursor(70,20);
+  arduboy.setCursor(70,0);
   arduboy.print(F("LVL: "));
   arduboy.print(stage+1);
-  arduboy.setCursor(70,50);
+  arduboy.setCursor(70,15);
   arduboy.print("B: Retry");
 }
 
@@ -225,7 +236,7 @@ void updateGameplay(){
 
 void updateSimulation(){
   
-  if(arduboy.everyXFrames(5)){
+  if(arduboy.everyXFrames(2)){
     if(movePlayer() == false){
       gamestate = GameState::GamePlay;
     }
@@ -242,6 +253,10 @@ void updateSimulation(){
       nextStage();
       stage++;
       gamestate = GameState::LoadLevel;
+      if(stage >= maxlevel) {
+        maxlevel = stage;
+        EEPROM.put(SAVELOCATION, maxlevel);
+      }
     }
   }
 
@@ -263,23 +278,34 @@ void updateLoadLevel(){
 void updateSplashScreen(){
   arduboy.clear();
   
-  arduboy.drawBitmap(15,0,splash,27,24);
-  arduboy.fillRect(19,23,19,40,1);
-  arduboy.setCursor(45,30);
+  arduboy.drawBitmap(10,0,splash,27,24);
+  arduboy.fillRect(14,23,19,40,1);
+  arduboy.setCursor(40,25);
+  arduboy.setTextSize(2);
   arduboy.println("LongCat");
+  arduboy.setTextSize(1);
   arduboy.setCursor(45,45);
-  arduboy.println("Press A");
+  arduboy.print("A: Continue");
+  arduboy.setCursor(45,55);
+  arduboy.print("B: New game");
   arduboy.display();
   if(arduboy.pressed(A_BUTTON)){
+    //stage = 0;
+    gamestate = GameState::LoadLevel;
+  }
+  if(arduboy.pressed(B_BUTTON)){
     stage = 0;
+    EEPROM.put(SAVELOCATION, 0);
     gamestate = GameState::LoadLevel;
   }
 }
 
 void setup() {
   arduboy.begin();
-  arduboy.setFrameRate(60);
-  arduboy.clear();  
+  arduboy.setFrameRate(30);
+  arduboy.clear(); 
+  loadEeprom();
+   
 }
 
 void loop() {
