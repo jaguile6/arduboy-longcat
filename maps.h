@@ -1,5 +1,5 @@
 
-const uint8_t maxLevel = 45;
+const uint8_t maxLevel = 44;
 
 
 

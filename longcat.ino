@@ -16,7 +16,7 @@ constexpr uint8_t tileSize = 8;
 TileType current[mapWidth*mapHeight] {TileType::Wall};
 Hero hero;
 uint8_t stage = 0;
-uint8_t maxlevel = 0;
+uint8_t savedLevel = 0;
 
 GameState gamestate = GameState::SplashScreen;
 
@@ -31,12 +31,12 @@ void setTile(int8_t x, int8_t y,TileType tile){
 }
 
 void loadEeprom(){
-  EEPROM.get(SAVELOCATION, maxlevel);
-  if(maxlevel >= 45) {
-    maxlevel = 0;
-    EEPROM.put(SAVELOCATION, maxlevel);
+  EEPROM.get(SAVELOCATION, savedLevel);
+  if(savedLevel >= 45) {
+    savedLevel = 0;
+    EEPROM.put(SAVELOCATION, savedLevel);
   }
-  stage = maxlevel;
+  stage = savedLevel;
 }
 
 void nextStage(){
@@ -53,6 +53,9 @@ void gameEnd(){
   arduboy.print(F("Game Completed!"));
   arduboy.display();
   arduboy.delayShort(3000);
+  stage = 0;
+  savedLevel = 0;
+  EEPROM.put(SAVELOCATION, savedLevel);
 }
 
 void renderLevelData(){
@@ -253,9 +256,9 @@ void updateSimulation(){
       nextStage();
       stage++;
       gamestate = GameState::LoadLevel;
-      if(stage >= maxlevel) {
-        maxlevel = stage;
-        EEPROM.put(SAVELOCATION, maxlevel);
+      if(stage >= savedLevel) {
+        savedLevel = stage;
+        EEPROM.put(SAVELOCATION, savedLevel);
       }
     }
   }
