@@ -7,7 +7,7 @@ void GameStateMainMenu::update(Game &game)
 	auto &arduboy = game.getArduboy();
 	if (arduboy.justPressed(UP_BUTTON))
 	{
-		if (this->selection > 1)
+		if (this->selection > 0)
 			this->selection--;
 	}
 
