@@ -49,7 +49,7 @@ void GameStateSimulate::update(Game &game)
 
 void GameStateSimulate::render(Game &game)
 {
-  LevelRenderer::renderPlayArea(game);
+  LevelRenderer::render(game);
 }
 
 void GameStateSimulate::nextStage(Game &game)

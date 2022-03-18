@@ -2,40 +2,38 @@
 #include "../Game.h"
 using namespace LevelRenderer;
 
-void LevelRenderer::render(Game &game)
-{
+void LevelRenderer::renderStuck(uint8_t xDrawOffset, uint8_t yDrawOffset, Game &game){
     auto &arduboy = game.getArduboy();
     if (LevelUtils::isStuck(game))
     {
-        arduboy.setCursor(70, 30);
+        arduboy.setCursor(xDrawOffset, yDrawOffset);
         arduboy.print(F("STUCK!"));
     }
-    renderPlayArea(game);
 }
 
-void LevelRenderer::renderRandData(Game &game)
+void LevelRenderer::renderRandData(uint8_t xDrawOffset, uint8_t yDrawOffset, Game &game)
 {
     auto &arduboy = game.getArduboy();
     auto &context = game.getGameContext();
     CatKey r = RandKey::toCatKey(context.currentSeed);
     for (uint8_t i = 0; i < CatKeyLength; i++)
     {
-        CatChars::drawChar(64 + (i * 8), 0, true, r.key[i] + 2);
+        CatChars::drawChar(xDrawOffset + (i * 8), yDrawOffset, true, r.key[i] + 2);
     }
 }
 
-void LevelRenderer::renderLevelData(Game &game)
+void LevelRenderer::renderLevelData(uint8_t xDrawOffset, uint8_t yDrawOffset, Game &game)
 {
     auto &arduboy = game.getArduboy();
     auto &context = game.getGameContext();
-    arduboy.setCursor(70, 20);
+    arduboy.setCursor(xDrawOffset,yDrawOffset);
     arduboy.print(F("LVL: "));
     arduboy.print(context.stage + 1);
-    arduboy.setCursor(70, 50);
+    arduboy.setCursor(xDrawOffset, yDrawOffset + 30);
     arduboy.print("B: Retry");
 }
 
-void LevelRenderer::renderLevel(Game &game)
+void LevelRenderer::renderLevel(uint8_t xDrawOffset, uint8_t yDrawOffset, Game &game)
 {
     auto &context = game.getGameContext();
     for (int j = 0; j < Map::mapHeight; j++)
@@ -43,12 +41,12 @@ void LevelRenderer::renderLevel(Game &game)
         for (int i = 0; i < Map::mapWidth; i++)
         {
             uint8_t tileIndex = toTileIndex(context.mapObject.getTile(i, j));
-            Sprites::drawOverwrite(i * Map::tileSize, j * Map::tileSize, Cats, tileIndex);
+            Sprites::drawOverwrite((i * Map::tileSize) + xDrawOffset,(j * Map::tileSize) + yDrawOffset, Cats, tileIndex);
         }
     }
 }
 
-void LevelRenderer::renderPlayer(Game &game)
+void LevelRenderer::renderPlayer(uint8_t xDrawOffset, uint8_t yDrawOffset, Game &game)
 {
     auto &context = game.getGameContext();
     TileType type;
@@ -70,16 +68,21 @@ void LevelRenderer::renderPlayer(Game &game)
         type = TileType::Cat_Head_Right;
         break;
     }
-    Sprites::drawOverwrite(context.hero.x * Map::tileSize, context.hero.y * Map::tileSize, Cats, toTileIndex(type));
+    Sprites::drawOverwrite((context.hero.x * Map::tileSize) + xDrawOffset, (context.hero.y * Map::tileSize) + yDrawOffset, Cats, toTileIndex(type));
 }
 
-void LevelRenderer::renderPlayArea(Game &game)
+//=============================================
+
+
+void LevelRenderer::render(Game &game)
 {
-    renderLevel(game);
-    renderPlayer(game);
-    renderLevelData(game);
+    renderLevel(0,0,game);
+    renderPlayer(0,0,game);
+    renderLevelData(70,20,game);
+    renderStuck(70,30,game);
     if (game.getGameMode() == GameMode::Random)
     {
-        renderRandData(game);
+        renderRandData(64,0,game);
     }
 }
+
