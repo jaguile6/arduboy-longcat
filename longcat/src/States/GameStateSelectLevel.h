@@ -2,6 +2,8 @@
 
 #include <stdint.h>
 #include "GameState.h"
+#include "../Utils/LevelUtils.h"
+#include "../Utils/LevelRenderer.h"
 #include "../Map/maps.h"
 
 // DO THIS WHEN HAVE TIME

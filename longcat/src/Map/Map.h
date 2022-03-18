@@ -100,5 +100,5 @@ public:
   }
 
 private:
-  TileType map[mapWidth * mapHeight]{TileType::Empty};
+  TileType map[mapWidth * mapHeight];
 };

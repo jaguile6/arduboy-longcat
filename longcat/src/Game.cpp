@@ -5,6 +5,7 @@ void Game::setup()
   this->arduboy.begin();
   this->arduboy.setFrameRate(60);
   this->arduboy.initRandomSeed();
+  LevelUtils::copyStaticLevel(*this);
 }
 
 void Game::loop()

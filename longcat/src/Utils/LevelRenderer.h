@@ -8,9 +8,11 @@ class Game;
 namespace LevelRenderer
 {
     void render(Game &game);
-    void renderRandData(Game &game);
-    void renderLevelData(Game &game);
-    void renderLevel(Game &game);
-    void renderPlayer(Game &game);
-    void renderPlayArea(Game &game);
+
+    void renderRandData(uint8_t xDrawOffset, uint8_t yDrawOffset, Game &game);
+    void renderLevelData(uint8_t xDrawOffset, uint8_t yDrawOffset, Game &game);
+    void renderLevel(uint8_t xDrawOffset, uint8_t yDrawOffset, Game &game);
+    void renderPlayer(uint8_t xDrawOffset, uint8_t yDrawOffset, Game &game);
+    void renderStuck(uint8_t xDrawOffset, uint8_t yDrawOffset, Game &game);
+
 };
