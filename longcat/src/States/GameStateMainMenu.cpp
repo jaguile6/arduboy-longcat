@@ -64,7 +64,7 @@ void GameStateMainMenu::render(Game &game)
 {
 	auto &arduboy = game.getArduboy();
 	// arduboy.fillScreen(WHITE);
-	const char *linear_s = "  Linear";
+	const char *linear_s = "  Campaign";
 	const char *random_s = "  Random";
 	const char *select_level_s = "  Select Level";
 	const char *select_seed_s = "  Select Seed";
