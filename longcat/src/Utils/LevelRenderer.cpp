@@ -6,8 +6,9 @@ void LevelRenderer::renderStuck(uint8_t xDrawOffset, uint8_t yDrawOffset, Game &
     auto &arduboy = game.getArduboy();
     if (LevelUtils::isStuck(game))
     {
-        arduboy.setCursor(xDrawOffset, yDrawOffset);
-        arduboy.print(F("STUCK!"));
+		arduboy.fillRect(xDrawOffset-3,yDrawOffset+1,58,35,WHITE);
+		arduboy.fillRect(xDrawOffset+4,yDrawOffset+8,44,21,BLACK);
+		CatChars::print(xDrawOffset+6, yDrawOffset+14, true, "STUCK");	
     }
 }
 
@@ -79,7 +80,7 @@ void LevelRenderer::render(Game &game)
     renderLevel(0,0,game);
     renderPlayer(0,0,game);
     renderLevelData(70,20,game);
-    renderStuck(70,30,game);
+    renderStuck(70,0,game);
     if (game.getGameMode() == GameMode::Random)
     {
         renderRandData(64,0,game);
