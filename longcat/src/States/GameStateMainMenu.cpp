@@ -7,7 +7,7 @@ void GameStateMainMenu::update(Game &game)
 	auto &arduboy = game.getArduboy();
 	if (arduboy.justPressed(UP_BUTTON))
 	{
-		if (this->selection > 1)
+		if (this->selection > 0)
 			this->selection--;
 	}
 
@@ -64,35 +64,37 @@ void GameStateMainMenu::render(Game &game)
 {
 	auto &arduboy = game.getArduboy();
 	// arduboy.fillScreen(WHITE);
-	const char *mainmenu_s = " \0";
-	const char *linear_s = "  Linear\0";
-	const char *random_s = "  Random\0";
-	const char *select_level_s = "  Select Level\0";
-	const char *select_seed_s = "  Select Seed\0";
-	const char *option_a_s = " \0";
-	const char *option_b_s = " \0";
-	const char *strings[] = {mainmenu_s, linear_s, random_s, select_level_s, select_seed_s, option_a_s, option_b_s};
-	for (uint8_t i = 0; i < 7; i++)
+	const char *linear_s = "  Linear";
+	const char *random_s = "  Random";
+	const char *select_level_s = "  Select Level";
+	const char *select_seed_s = "  Select Seed";
+	const char *strings[] = {linear_s, random_s, select_level_s, select_seed_s};
+	for (uint8_t i = 0; i < 4; i++)
 	{
-		CatChars::print(0, i * 9+4, true, strings[i]);
-		if (selection == i - 1)
+		CatChars::print(0, (i * 9) + 12, true, strings[i]);
+		if (selection == i)
 		{
 			uint8_t len = CatChars::length(strings[i]);
-			CatChars::drawChar((len)*8 + (((sin(arduboy.frameCount / 15.0f) + 1) / 2.0f) * 5) + 1, (this->selection * 9) + 9+4, true, 45);
+			CatChars::drawChar((len)*8 + (((sin(arduboy.frameCount / 15.0f) + 1) / 2.0f) * 5) + 1, (this->selection * 9) + 12, true, 45);
 		}
 	}
-	int a=80;
-	if(arduboy.frameCount%(2*a)<=a){
-		CatChars::print((arduboy.frameCount/2%a), 2, true, "<  <  <  <\0");
-	}else{
-		CatChars::print(a-(arduboy.frameCount/2%a), 2, true, "<  <  <  <\0");
+
+	const int loopLength = 80;
+	if (arduboy.frameCount % (2 * loopLength) <= loopLength)
+	{
+		CatChars::print((arduboy.frameCount / 2 % loopLength), 2, true, "<  <  <  <");
 	}
-	
-	if(arduboy.frameCount%(2*a)<=a){
-		CatChars::print(a/2-(arduboy.frameCount/2%a), 52, true, "<  <  <  <\0");
-	}else{
-		CatChars::print((arduboy.frameCount/2%a)-a/2, 52, true, "<  <  <  <\0");
+	else
+	{
+		CatChars::print(loopLength - (arduboy.frameCount / 2 % loopLength), 2, true, "<  <  <  <");
 	}
-		
-	
+
+	if (arduboy.frameCount % (2 * loopLength) <= loopLength)
+	{
+		CatChars::print(loopLength / 2 - (arduboy.frameCount / 2 % loopLength), 52, true, "<  <  <  <");
+	}
+	else
+	{
+		CatChars::print((arduboy.frameCount / 2 % loopLength) - loopLength / 2, 52, true, "<  <  <  <");
+	}
 }
