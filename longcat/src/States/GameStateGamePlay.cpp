@@ -60,11 +60,11 @@ void GameStateGamePlay::readPlayerInput(Game &game)
 			game.setGameState(GameState::Simulate);
 		}
 	}
-	else if (arduboy.pressed(B_BUTTON) && arduboy.pressed(A_BUTTON))
+	else if (arduboy.pressed(B_BUTTON))
 	{
 		game.setGameState(GameState::SplashScreen);
 	}
-	else if (arduboy.justPressed(B_BUTTON))
+	else if (arduboy.justPressed(A_BUTTON))
 	{
 		game.setGameState(GameState::LoadLevel);
 	}
