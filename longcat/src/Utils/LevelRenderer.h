@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <Arduboy2.h>
 #include "LevelUtils.h"
+#include "../Utils/CatChars.h"
 
 class Game;
 namespace LevelRenderer

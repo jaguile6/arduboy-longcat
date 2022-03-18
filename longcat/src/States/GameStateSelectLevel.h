@@ -19,6 +19,4 @@ public:
   void render(Game &game);
 
 private:
-  void printBCD(uint8_t x, uint8_t y, uint8_t value, Game &game);
-  uint8_t lenBCD(uint8_t value, Game &game);
 };

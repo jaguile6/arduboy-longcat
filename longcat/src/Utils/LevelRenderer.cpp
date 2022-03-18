@@ -26,13 +26,11 @@ void LevelRenderer::renderLevelData(uint8_t xDrawOffset, uint8_t yDrawOffset, Ga
 {
     auto &arduboy = game.getArduboy();
     auto &context = game.getGameContext();
-    arduboy.setCursor(xDrawOffset,yDrawOffset);
-    arduboy.print(F("Level: "));
-    arduboy.print(context.stage + 1);
-    arduboy.setCursor(xDrawOffset, yDrawOffset + 20);
-    arduboy.print("A: Retry");
-    arduboy.setCursor(xDrawOffset, yDrawOffset + 30);
-    arduboy.print("B: Menu");
+	
+	CatChars::print(xDrawOffset, yDrawOffset, true, "Level");	
+	CatChars::printBCD(xDrawOffset + 42, yDrawOffset, context.stage + 1);
+	CatChars::print(xDrawOffset, yDrawOffset+20, true, "A-Retry");
+	CatChars::print(xDrawOffset, yDrawOffset+30, true, "b-menu");
 }
 
 void LevelRenderer::renderLevel(uint8_t xDrawOffset, uint8_t yDrawOffset, Game &game)
