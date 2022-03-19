@@ -51,12 +51,12 @@ void GameStateMainMenu::update(Game &game)
 			game.setGameState(GameState::SelectSeed);
 			break;
 		}
+	}
 
-		if (arduboy.justPressed(B_BUTTON))
-		{
-			this->selection = 0;
-			game.setGameState(GameState::SplashScreen);
-		}
+	if (arduboy.justPressed(B_BUTTON))
+	{
+		this->selection = 0;
+		game.setGameState(GameState::SplashScreen);
 	}
 }
 
