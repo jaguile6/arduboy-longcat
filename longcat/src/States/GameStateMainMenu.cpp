@@ -24,7 +24,7 @@ void GameStateMainMenu::update(Game &game)
 		{
 		case 0:
 			context.currentSeed = 0;
-			context.stage = 0;
+			//context.stage = 0;
 			this->selection = 0;
 			game.setGameMode(GameMode::Linear);
 			game.setGameState(GameState::LoadLevel);

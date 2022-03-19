@@ -5,6 +5,8 @@ void Game::setup()
   this->arduboy.begin();
   this->arduboy.setFrameRate(60);
   this->arduboy.initRandomSeed();
+  this->gameContext.savedStage = constrain(EEPROM.read(100),0,84);
+  this->gameContext.stage = this->gameContext.savedStage;
   LevelUtils::copyStaticLevel(*this);
 }
 

@@ -28,6 +28,9 @@ void GameStateSimulate::update(Game &game)
       {
         nextStage(game);
         ++context.stage;
+	if(context.stage>context.savedStage){
+		EEPROM.update(100, context.stage);
+	}
         game.setGameState(GameState::LoadLevel);
       }
       break;
