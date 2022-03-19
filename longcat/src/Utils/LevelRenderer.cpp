@@ -29,7 +29,7 @@ void LevelRenderer::renderLevelData(uint8_t xDrawOffset, uint8_t yDrawOffset, Ga
     auto &context = game.getGameContext();
 	
 	CatChars::print(xDrawOffset, yDrawOffset, true, "Level");	
-	CatChars::printBCD(xDrawOffset + 42, yDrawOffset, context.stage + 1);
+	CatChars::printBCD(xDrawOffset + 42, yDrawOffset, true, context.stage + 1);
 	CatChars::print(xDrawOffset, yDrawOffset+20, true, "A-Retry");
 	CatChars::print(xDrawOffset, yDrawOffset+30, true, "b-menu");
 }

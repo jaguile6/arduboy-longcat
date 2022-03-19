@@ -10,6 +10,8 @@
 
 #include "States.h"
 
+#include "Utils/SaveUtil.h"
+
 class Game
 {
 public:
@@ -30,6 +32,8 @@ private:
   GameStateLoadLevel loadLevelState;
   GameStateGamePlay gamePlayState;
   GameStateSimulate simulateState;
+  GameStateCampaignMenu campaignMenuState;
+  GameStateRandomMenu randomMenuState;
 
 public:
   void setGameMode(GameMode gameMode)
