@@ -62,7 +62,15 @@ void GameStateGamePlay::readPlayerInput(Game &game)
 	}
 	else if (arduboy.pressed(B_BUTTON))
 	{
-		game.setGameState(GameState::SplashScreen);
+		switch (game.getGameMode())
+		{
+		case GameMode::Fixed: 
+		case GameMode::Linear: game.setGameState(GameState::CampaignMenu); break;
+		case GameMode::Random: game.setGameState(GameState::RandomMenu); break;
+		default:
+			game.setGameState(GameState::MainMenu); break;
+		}
+		
 	}
 	else if (arduboy.justPressed(A_BUTTON))
 	{

@@ -1,8 +1,8 @@
-#include "GameStateMainMenu.h"
+#include "GameStateRandomMenu.h"
 
 #include "../Game.h"
 
-void GameStateMainMenu::update(Game &game)
+void GameStateRandomMenu::update(Game &game)
 {
 	auto &arduboy = game.getArduboy();
 	if (arduboy.justPressed(UP_BUTTON))
@@ -11,54 +11,61 @@ void GameStateMainMenu::update(Game &game)
 			this->selection--;
 	}
 
-	if (arduboy.justPressed(DOWN_BUTTON))
+	else if (arduboy.justPressed(DOWN_BUTTON))
 	{
 		if (this->selection < maxSelection)
 			this->selection++;
 	}
 
-	if (arduboy.justPressed(A_BUTTON))
+	else if (arduboy.justPressed(A_BUTTON))
 	{
 		auto &context = game.getGameContext();
 		switch (selection)
 		{
 		case 0:
+		{
+			context.currentSeed = arduboy.generateRandomSeed();
+			context.stage = 0;
 			this->selection = 0;
-			game.setGameState(GameState::CampaignMenu);
+			game.setGameMode(GameMode::Random);
+			game.setGameState(GameState::LoadLevel);
 			break;
+		}
 		case 1:
+		{
+			context.currentSeed = 0;
+			context.stage = 0;
 			this->selection = 0;
-			game.setGameState(GameState::RandomMenu);
+			game.setGameMode(GameMode::Random);
+			game.setGameState(GameState::SelectSeed);
 			break;
-		case 2:
-			this->selection = 0;
-			game.setGameState(GameState::OptionsMenu);
-			break;
+		}
 		}
 	}
 
-	if (arduboy.justPressed(B_BUTTON))
+	else if (arduboy.justPressed(B_BUTTON))
 	{
 		this->selection = 0;
-		game.setGameState(GameState::SplashScreen);
+		game.setGameState(GameState::MainMenu);
 	}
 }
 
-void GameStateMainMenu::render(Game &game)
+void GameStateRandomMenu::render(Game &game)
 {
 	auto &arduboy = game.getArduboy();
 	arduboy.fillScreen(WHITE);
-	const char *linear_s = "  Campaign";
-	const char *random_s = "  Random";
-	const char *options_s = "  Options";
-	const char *strings[] = {linear_s, random_s, options_s};
+
+	const char *line_0 = "Random:";
+	const char *line_1 = "  Start";
+	const char *line_2 = "  Select Seed";
+	const char *strings[] = {line_0, line_1, line_2};
 	for (uint8_t i = 0; i < 3; i++)
 	{
 		CatChars::print(0, (i * 9) + 12, false, strings[i]);
-		if (selection == i)
+		if (selection == i - 1)
 		{
 			uint8_t len = CatChars::length(strings[i]);
-			CatChars::drawChar((len)*8 + (((sin(arduboy.frameCount / 15.0f) + 1) / 2.0f) * 5) + 1, (this->selection * 9) + 12, false, 45);
+			CatChars::drawChar((len)*8 + (((sin(arduboy.frameCount / 15.0f) + 1) / 2.0f) * 5) + 1, (this->selection * 9) + 12 + 8, false, 45);
 		}
 	}
 

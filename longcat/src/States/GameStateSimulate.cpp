@@ -22,15 +22,18 @@ void GameStateSimulate::update(Game &game)
       if (context.stage + 1 >= maxLevel)
       {
         gameEnd(game);
-        game.setGameState(GameState::SplashScreen);
+        game.setGameState(GameState::CampaignMenu);
       }
       else
       {
         nextStage(game);
         ++context.stage;
-	if(context.stage>context.savedStage){
-		EEPROM.update(100, context.stage);
-	}
+        Save saved = SaveUtil::get();
+        if (context.stage > saved.lastStage)
+        {
+          saved.lastStage = context.stage;
+          SaveUtil::update(saved);
+        }
         game.setGameState(GameState::LoadLevel);
       }
       break;
@@ -44,11 +47,10 @@ void GameStateSimulate::update(Game &game)
     break;
     case GameMode::Fixed:
       gameEnd(game);
-      game.setGameState(GameState::SplashScreen);
+      game.setGameState(GameState::CampaignMenu);
     }
   }
 }
-
 
 void GameStateSimulate::render(Game &game)
 {

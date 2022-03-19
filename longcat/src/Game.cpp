@@ -5,8 +5,26 @@ void Game::setup()
   this->arduboy.begin();
   this->arduboy.setFrameRate(60);
   this->arduboy.initRandomSeed();
-  this->gameContext.savedStage = constrain(EEPROM.read(100),0,84);
-  this->gameContext.stage = this->gameContext.savedStage;
+
+  Save saveValue;
+  if (SaveUtil::tryGet(saveValue))
+  {
+    this->gameContext.stage = saveValue.lastStage;
+    this->gameContext.audioEnabled = saveValue.audioEnabled;
+    this->gameContext.randomDifficulty = saveValue.randomDifficulty;
+  }
+  else
+  {
+    this->gameContext.stage = 0;
+    this->gameContext.audioEnabled = true;
+    this->gameContext.randomDifficulty = 0;
+
+    saveValue.audioEnabled = true;
+    saveValue.lastStage = 0;
+    saveValue.randomDifficulty = 0;
+    SaveUtil::update(saveValue);
+  }
+
   LevelUtils::copyStaticLevel(*this);
 }
 
@@ -16,54 +34,57 @@ void Game::loop()
     return;
 
   this->arduboy.pollButtons();
-
+  this->arduboy.clear();
   switch (this->gameState)
   {
   case GameState::SplashScreen:
-    this->arduboy.clear();
     this->splashScreenState.update(*this);
     this->splashScreenState.render(*this);
-    this->arduboy.display();
     break;
 
   case GameState::MainMenu:
-    this->arduboy.clear();
     this->mainMenuState.update(*this);
     this->mainMenuState.render(*this);
-    this->arduboy.display();
     break;
 
   case GameState::SelectLevel:
-    this->arduboy.clear();
     this->selectLevelState.update(*this);
     this->selectLevelState.render(*this);
-    this->arduboy.display();
     break;
 
   case GameState::SelectSeed:
-    this->arduboy.clear();
     this->selectSeedState.update(*this);
     this->selectSeedState.render(*this);
-    this->arduboy.display();
     break;
 
   case GameState::LoadLevel:
     this->loadLevelState.update(*this);
-    this->loadLevelState.render(*this);
+    //this->loadLevelState.render(*this);
     break;
 
   case GameState::GamePlay:
-    this->arduboy.clear();
     this->gamePlayState.update(*this);
     this->gamePlayState.render(*this);
-    this->arduboy.display();
     break;
 
   case GameState::Simulate:
-    this->arduboy.clear();
     this->simulateState.update(*this);
     this->simulateState.render(*this);
-    this->arduboy.display();
     break;
+
+  case GameState::CampaignMenu:
+    this->campaignMenuState.update(*this);
+    this->campaignMenuState.render(*this);
+    break;
+
+  case GameState::RandomMenu:
+    this->randomMenuState.update(*this);
+    this->randomMenuState.render(*this);
+    break;
+
+  default:
+    this->setGameState(GameState::SplashScreen);
   }
+
+  this->arduboy.display();
 }

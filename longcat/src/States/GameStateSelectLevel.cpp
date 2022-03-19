@@ -35,7 +35,7 @@ void GameStateSelectLevel::update(Game &game)
 	else if (arduboy.justPressed(B_BUTTON))
 	{
 		this->selection = 0;
-		game.setGameState(GameState::MainMenu);
+		game.setGameState(GameState::CampaignMenu);
 	}
 }
 
@@ -43,8 +43,8 @@ void GameStateSelectLevel::render(Game &game)
 {
 	const char *selectStage_s = "Stage:";
 	uint8_t length = CatChars::length(selectStage_s);
-	CatChars::print(0, 0, true, selectStage_s);
-	CatChars::printBCD(length * 8, 0, this->selection + 1);
+	CatChars::print(0, 0, false, selectStage_s);
+	CatChars::printBCD(length * 8, 0, false,this->selection + 1);
 	LevelRenderer::renderLevel(32,8,game);
 	LevelRenderer::renderPlayer(32,8,game);
 }

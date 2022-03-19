@@ -133,21 +133,21 @@ public:
 		return index;
 	}
 
-	static void printBCD(uint8_t x, uint8_t y, uint8_t value)
+	static void printBCD(uint8_t x, uint8_t y, bool invert,uint8_t value)
 	{
 		uint8_t bcdlength = lenBCD(value);
 		uint8_t index = 0;
 
 		if (value == 0)
 		{
-			CatChars::drawChar(x, y, true, 2);
+			CatChars::drawChar(x, y, invert, 2);
 			return;
 		}
 
 		while (value > 0)
 		{
 			uint8_t newUnit = value % 10;
-			CatChars::drawChar((x + ((bcdlength - 1) * 8)) - (index * 8), y, true, newUnit + 2);
+			CatChars::drawChar((x + ((bcdlength - 1) * 8)) - (index * 8), y, invert, newUnit + 2);
 			value /= 10;
 			index++;
 		}

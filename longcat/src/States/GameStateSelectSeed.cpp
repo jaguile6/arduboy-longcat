@@ -43,7 +43,7 @@ void GameStateSelectSeed::update(Game &game)
 	{
 		this->selection = 0;
         this->key = RandKey::toCatKey(0);
-		game.setGameState(GameState::MainMenu);
+		game.setGameState(GameState::RandomMenu);
 	}
 }
 
