@@ -9,3 +9,4 @@
 #include "States/GameStateSimulate.h"
 #include "States/GameStateCampaignMenu.h"
 #include "States/GameStateRandomMenu.h"
+#include "States/GameStateCredits.h"

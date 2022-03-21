@@ -9,6 +9,7 @@ enum class GameState : uint8_t
   CampaignMenu,
   RandomMenu,
   OptionsMenu,
+  CreditsMenu,
   //Level Selection
   SelectLevel,
   SelectSeed,

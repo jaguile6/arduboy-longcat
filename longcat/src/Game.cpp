@@ -82,6 +82,11 @@ void Game::loop()
     this->randomMenuState.render(*this);
     break;
 
+  case GameState::CreditsMenu:
+    this->creditsState.update(*this);
+    this->creditsState.render(*this);
+    break;
+	
   default:
     this->setGameState(GameState::SplashScreen);
   }

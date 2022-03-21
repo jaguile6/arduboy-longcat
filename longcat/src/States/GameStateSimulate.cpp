@@ -60,9 +60,7 @@ void GameStateSimulate::render(Game &game)
 void GameStateSimulate::nextStage(Game &game)
 {
   auto &arduboy = game.getArduboy();
-  arduboy.clear();
-  arduboy.setCursor(35, 30);
-  arduboy.print("Purrfect!");
+  arduboy.drawBitmap(63,0,thumbsup,64,64,WHITE);
   arduboy.display();
   arduboy.delayShort(1000);
 }

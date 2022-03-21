@@ -34,6 +34,7 @@ private:
   GameStateSimulate simulateState;
   GameStateCampaignMenu campaignMenuState;
   GameStateRandomMenu randomMenuState;
+  GameStateCredits creditsState;
 
 public:
   void setGameMode(GameMode gameMode)
