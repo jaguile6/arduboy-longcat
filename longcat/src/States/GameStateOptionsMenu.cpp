@@ -21,6 +21,31 @@ void GameStateOptionsMenu::update(Game &game)
 	{
 		if (this->selection < maxSelection)
 			this->selection++;
+	}else if (arduboy.justPressed(A_BUTTON))
+	{
+		auto &context = game.getGameContext();
+		switch (selection)
+		{
+			case 0:
+			{
+				context.audioEnabled = !context.audioEnabled;
+				Save saveValue;
+				if (SaveUtil::tryGet(saveValue))
+				  {
+					saveValue.audioEnabled = context.audioEnabled;
+				  }
+				  else
+				  {
+					saveValue.lastStage = 0;
+					saveValue.audioEnabled = context.audioEnabled;
+					saveValue.randomDifficulty = 0;
+
+					SaveUtil::update(saveValue);
+				  }
+				this->selection = 0;
+				break;
+			}
+		}
 	}
 
 }
@@ -28,13 +53,17 @@ void GameStateOptionsMenu::update(Game &game)
 void GameStateOptionsMenu::render(Game &game)
 {
   auto &arduboy = game.getArduboy();
+  auto &context = game.getGameContext();
   arduboy.fillScreen(WHITE);
   
 	const char *line_0 = "Options:";
 	const char *line_1 = "  Sound ON";
-	const char *line_2 = "  Misc.";
-	const char *strings[] = {line_0, line_1, line_2};
-	for (uint8_t i = 0; i < 3; i++)
+	const char *line_2 = "  Sound OFF";
+	const char *strings[] = {line_0, line_1};
+	if(!context.audioEnabled){
+		strings[1] = line_2;
+	}
+	for (uint8_t i = 0; i < 2; i++)
 	{
 		CatChars::print(0, (i * 9) + 12, false, strings[i]);
 		if (selection == i - 1)
