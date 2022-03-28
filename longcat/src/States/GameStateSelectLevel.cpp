@@ -6,20 +6,22 @@ void GameStateSelectLevel::update(Game &game)
 {
 	auto &arduboy = game.getArduboy();
 	auto &context = game.getGameContext();
-	if (arduboy.justPressed(DOWN_BUTTON))
+	if (arduboy.pressed(DOWN_BUTTON))
 	{
 		if (this->selection > 0)
 			this->selection--;
 		context.stage = this->selection;
 		LevelUtils::copyStaticLevel(game);
+		arduboy.delayShort(250);
 	}
 
-	else if (arduboy.justPressed(UP_BUTTON))
+	else if (arduboy.pressed(UP_BUTTON))
 	{
 		if (this->selection < maxLevel-1)
 			this->selection++;
 		context.stage = this->selection;
 		LevelUtils::copyStaticLevel(game);
+		arduboy.delayShort(250);
 	}
 
 	else if (arduboy.justPressed(A_BUTTON))

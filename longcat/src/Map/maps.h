@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <Arduboy2.h>
 
-const uint8_t maxLevel = 80;
+const uint8_t maxLevel = 100;
 
 const uint8_t PROGMEM levels[][10] = 
 {

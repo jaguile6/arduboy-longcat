@@ -15,7 +15,7 @@ void GameStateCredits::update(Game &game)
 void GameStateCredits::render(Game &game)
 {
   auto &arduboy = game.getArduboy();
-  CatChars::print(0, 15, true, "credits:");	
-  CatChars::print(0, 35, true, "< jaguile6 <");	
-  CatChars::print(0, 45, true, "< Dreamer2345 <");	
+  CatChars::print(3, 15, true, "credits:");	
+  CatChars::print(3, 35, true, "<  jaguile6   <");	
+  CatChars::print(3, 45, true, "< Dreamer2345 <");	
 }
