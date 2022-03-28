@@ -47,6 +47,23 @@ void LevelRenderer::renderLevel(uint8_t xDrawOffset, uint8_t yDrawOffset, Game &
     }
 }
 
+void LevelRenderer::renderPreview(uint8_t size ,uint8_t xDrawOffset, uint8_t yDrawOffset, Game &game)
+{
+    auto &context = game.getGameContext();
+    auto &arduboy = game.getArduboy();
+    for (int j = 0; j < Map::mapHeight; j++)
+    {
+        for (int i = 0; i < Map::mapWidth; i++)
+        {
+            uint8_t tileIndex = toTileIndex(context.mapObject.getTile(i, j));
+			arduboy.drawRect(xDrawOffset,yDrawOffset,8*size+2,8*size+2,WHITE);
+			if(tileIndex==1){
+				arduboy.drawRect((i * size) + xDrawOffset+1,(j * size) + yDrawOffset+1,size,size,WHITE);
+			}
+        }
+    }
+}
+
 void LevelRenderer::renderPlayer(uint8_t xDrawOffset, uint8_t yDrawOffset, Game &game)
 {
     auto &context = game.getGameContext();

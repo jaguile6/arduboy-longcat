@@ -45,8 +45,14 @@ void GameStateSelectLevel::render(Game &game)
 {
 	const char *selectStage_s = "Stage:";
 	uint8_t length = CatChars::length(selectStage_s);
-	CatChars::print(0, 0, false, selectStage_s);
-	CatChars::printBCD(length * 8, 0, false,this->selection + 1);
-	LevelRenderer::renderLevel(32,8,game);
-	LevelRenderer::renderPlayer(32,8,game);
+	CatChars::print(30, 0, false, selectStage_s);
+	CatChars::printBCD(length * 8+30, 0, false,this->selection + 1);
+	LevelRenderer::renderPreview(5,42,12,game);
+	
+	//Prev and next:
+	CatChars::printBCD(10, 20, false,this->selection);
+	LevelRenderer::renderPreview(3,2,32,game);
+	CatChars::printBCD(102, 20, false,this->selection + 2);
+	LevelRenderer::renderPreview(3,98,32,game);
+	//LevelRenderer::renderPlayer(32,8,game);
 }
