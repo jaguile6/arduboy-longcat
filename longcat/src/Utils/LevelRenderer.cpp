@@ -100,7 +100,8 @@ void LevelRenderer::render(Game &game)
     renderStuck(70,0,game);
     if (game.getGameMode() == GameMode::Random)
     {
-        renderRandData(64,0,game);
+		CatChars::print(70, 10, true, " Seed:   ");	
+        renderRandData(64,20,game);
     }
 }
 
