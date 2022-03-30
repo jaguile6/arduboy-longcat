@@ -4,12 +4,18 @@ using namespace LevelRenderer;
 
 void LevelRenderer::renderStuck(uint8_t xDrawOffset, uint8_t yDrawOffset, Game &game){
     auto &arduboy = game.getArduboy();
-    if (LevelUtils::isStuck(game))
-    {
-		arduboy.fillRect(xDrawOffset-3,yDrawOffset+1,58,35,WHITE);
-		arduboy.fillRect(xDrawOffset+4,yDrawOffset+8,44,21,BLACK);
-		CatChars::print(xDrawOffset+6, yDrawOffset+14, true, "STUCK");	
-    }
+	arduboy.fillRect(xDrawOffset-6,yDrawOffset+8,64,21,BLACK);
+	arduboy.fillRect(xDrawOffset-3,yDrawOffset+1,58,35,WHITE);
+	arduboy.fillRect(xDrawOffset+4,yDrawOffset+8,44,21,BLACK);
+	CatChars::print(xDrawOffset+6, yDrawOffset+14, true, "STUCK");
+}
+
+void LevelRenderer::renderWin(uint8_t xDrawOffset, uint8_t yDrawOffset, Game &game){
+    auto &arduboy = game.getArduboy();
+    arduboy.fillRect(63,0,64,64,BLACK);
+    arduboy.drawBitmap(63,0,thumbsup,64,64,WHITE);
+    arduboy.display();
+   arduboy.delayShort(2000);
 }
 
 void LevelRenderer::renderRandData(uint8_t xDrawOffset, uint8_t yDrawOffset, Game &game)
@@ -97,11 +103,17 @@ void LevelRenderer::render(Game &game)
     renderLevel(0,0,game);
     renderPlayer(0,0,game);
     renderLevelData(70,20,game);
-    renderStuck(70,0,game);
     if (game.getGameMode() == GameMode::Random)
     {
         CatChars::print(70, 10, true, " Seed:   ");	
         renderRandData(64,20,game);
     }
+    if (LevelUtils::checkWin(game)){
+		renderWin(64,0,game);
+	}else{
+		if (LevelUtils::isStuck(game)){
+			renderStuck(70,0,game);
+		}
+	}
 }
 

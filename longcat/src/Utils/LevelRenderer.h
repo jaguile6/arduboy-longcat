@@ -16,5 +16,6 @@ namespace LevelRenderer
     void renderPreview(uint8_t size, uint8_t xDrawOffset, uint8_t yDrawOffset, Game &game);
     void renderPlayer(uint8_t xDrawOffset, uint8_t yDrawOffset, Game &game);
     void renderStuck(uint8_t xDrawOffset, uint8_t yDrawOffset, Game &game);
+    void renderWin(uint8_t xDrawOffset, uint8_t yDrawOffset, Game &game);
 
 };

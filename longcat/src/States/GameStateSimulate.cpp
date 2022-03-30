@@ -60,9 +60,9 @@ void GameStateSimulate::render(Game &game)
 void GameStateSimulate::nextStage(Game &game)
 {
   auto &arduboy = game.getArduboy();
-  arduboy.drawBitmap(63,0,thumbsup,64,64,WHITE);
-  arduboy.display();
-  arduboy.delayShort(1000);
+  //arduboy.drawBitmap(63,0,thumbsup,64,64,WHITE);
+  //arduboy.display();
+  //arduboy.delayShort(1000);
 }
 
 void GameStateSimulate::gameEnd(Game &game)
