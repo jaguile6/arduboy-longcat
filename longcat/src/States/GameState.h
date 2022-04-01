@@ -17,4 +17,6 @@ enum class GameState : uint8_t
   LoadLevel,
   GamePlay,
   Simulate,
+  //End GamePlay
+  EndScreen
 };

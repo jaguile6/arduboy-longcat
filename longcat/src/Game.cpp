@@ -92,6 +92,11 @@ void Game::loop()
     this->optionsMenuState.render(*this);
     break;
 	
+  case GameState::EndScreen:
+    this->endScreenState.update(*this);
+    this->endScreenState.render(*this);
+    break;
+	
   default:
     this->setGameState(GameState::SplashScreen);
   }

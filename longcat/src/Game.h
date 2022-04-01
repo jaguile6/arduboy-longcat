@@ -36,6 +36,7 @@ private:
   GameStateRandomMenu randomMenuState;
   GameStateCredits creditsState;
   GameStateOptionsMenu optionsMenuState;
+  GameStateEndScreen endScreenState;
 
 public:
   void setGameMode(GameMode gameMode)

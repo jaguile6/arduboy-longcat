@@ -11,3 +11,4 @@
 #include "States/GameStateRandomMenu.h"
 #include "States/GameStateCredits.h"
 #include "States/GameStateOptionsMenu.h"
+#include "States/GameStateEndScreen.h"
