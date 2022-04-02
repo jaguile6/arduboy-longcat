@@ -82,6 +82,6 @@ void GameStateEndScreen::render(Game &game)
   }
   if(f%60<30)
   {
-  Sprites::drawOverwrite(20,17,endTitle,0);
+  Sprites::drawErase(20,17,endTitle,0);
   }
 }
