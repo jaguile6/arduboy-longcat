@@ -164,6 +164,7 @@ bool GameStateSimulate::movePlayer(Game &game)
   {
     context.hero.dx = 0;
     context.hero.dy = 0;
+	game.clickSound();
     return false;
   }
 }
