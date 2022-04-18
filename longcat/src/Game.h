@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Arduboy2.h>
+#include <ArduboyTones.h>
 
 #include "States/GameState.h"
 
@@ -25,7 +26,6 @@ private:
 
 private:
   Arduboy2 arduboy;
-  BeepPin2 beep;
   GameStateSplashScreen splashScreenState;
   GameStateMainMenu mainMenuState;
   GameStateSelectLevel selectLevelState;
@@ -42,12 +42,9 @@ private:
 public:
   void clickSound()
   {
-	if(this->gameContext.audioEnabled)
-	{
-      beep.tone(beep.freq(100), 20);
-	}
+    ArduboyTones::tone(100, 20);
   }
-  
+
   void setGameMode(GameMode gameMode)
   {
     this->gameMode = gameMode;

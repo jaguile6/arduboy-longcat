@@ -7,7 +7,6 @@ struct Save
 {
     uint16_t hash;
     uint8_t lastStage;
-    bool audioEnabled;
     uint8_t randomDifficulty;
 };
 

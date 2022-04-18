@@ -12,6 +12,5 @@ public:
   Map mapObject;
   Hero hero;
   //Settings
-  bool audioEnabled;
   uint8_t randomDifficulty;
 };
