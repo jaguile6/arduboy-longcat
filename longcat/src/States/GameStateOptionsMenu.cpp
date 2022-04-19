@@ -10,7 +10,7 @@ void GameStateOptionsMenu::update(Game &game)
   {
     game.setGameState(GameState::MainMenu);
   }
-  
+
 	if (arduboy.justPressed(UP_BUTTON))
 	{
 		if (this->selection > 0)
@@ -28,20 +28,18 @@ void GameStateOptionsMenu::update(Game &game)
 		{
 			case 0:
 			{
-				context.audioEnabled = !context.audioEnabled;
-				Save saveValue;
-				if (SaveUtil::tryGet(saveValue))
-				  {
-					saveValue.audioEnabled = context.audioEnabled;
-				  }
-				  else
-				  {
-					saveValue.lastStage = 0;
-					saveValue.audioEnabled = context.audioEnabled;
-					saveValue.randomDifficulty = 0;
 
-					SaveUtil::update(saveValue);
-				  }
+				if (arduboy.audio.enabled())
+				{
+					arduboy.audio.off();
+				}
+				else
+				{
+					arduboy.audio.on();
+				}
+				arduboy.audio.saveOnOff();
+				ArduboyTones::tone(NOTE_CS6, 30);
+
 				this->selection = 0;
 				break;
 			}
@@ -55,12 +53,12 @@ void GameStateOptionsMenu::render(Game &game)
   auto &arduboy = game.getArduboy();
   auto &context = game.getGameContext();
   arduboy.fillScreen(WHITE);
-  
+
 	const char *line_0 = "Options:";
 	const char *line_1 = "  Sound ON";
 	const char *line_2 = "  Sound OFF";
 	const char *strings[] = {line_0, line_1};
-	if(!context.audioEnabled){
+	if(!arduboy.audio.enabled()){
 		strings[1] = line_2;
 	}
 	for (uint8_t i = 0; i < 2; i++)
